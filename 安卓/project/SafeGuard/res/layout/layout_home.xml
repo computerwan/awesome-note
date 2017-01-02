@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="fill_parent"
+              android:layout_height="fill_parent"
+			  android:weightSum="1">
+    <TextView
+       android:layout_width="fill_parent"
+       android:layout_height="65dip"
+       android:textSize="24sp"
+       android:gravity="center"
+       android:background="#5500ff00"
+        android:text="主界面"/>
+	<cn.edu.usst.SafeGuard.view.MyTextView
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:singleLine="true"
+	    android:ellipsize="marquee"
+	    android:text="欢迎使用安全卫士，安全卫士为你提供了特别多个功能，欢迎使用，谢谢！！！！！！"/>
+
+	<GridView
+			android:background="@color/transparent"
+			android:listSelector="@drawable/gv_list_selector"
+			android:padding="0dip"
+			android:verticalSpacing="5dip"
+			android:numColumns="3"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:id="@+id/gv_home_menus"
+			android:layout_weight="1.17"></GridView>
+</LinearLayout>
+

@@ -38,12 +38,15 @@ Hbase返回的所有数据都是排序的：行，列族，列，时间戳（反
 2. Column Family:列族，和row key一样都是schema一部分，需要在表使用前定义，作为列的前缀
 3. Column Qualifier：列，每个列必须包含在一个列族中
 4. {row, column, version} 元组就是一个HBase中的一个 cell，不可分割
-[hbase数据模型1](https://github.com/computerwan/awesome-note/blob/master/attachment/hbase%E6%95%B0%E6%8D%AE%E6%A8%A1%E5%9E%8B1.jpg)
-[hbase数据模型2](https://github.com/computerwan/awesome-note/blob/master/attachment/hbase%E6%95%B0%E6%8D%AE%E6%A8%A1%E5%9E%8B2.jpg)
+
+![hbase数据模型1](https://github.com/computerwan/awesome-note/blob/master/attachment/hbase%E6%95%B0%E6%8D%AE%E6%A8%A1%E5%9E%8B1.jpg)
+![hbase数据模型2](https://github.com/computerwan/awesome-note/blob/master/attachment/hbase%E6%95%B0%E6%8D%AE%E6%A8%A1%E5%9E%8B2.jpg)
 
 ### 3.2 系统架构
 由client，Zookeeper，HMaster，HRegionServer组成
-[hbase系统架构图](https://github.com/computerwan/awesome-note/blob/master/attachment/hbase%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84%E5%9B%BE.jpg)
+
+![hbase系统架构图](https://github.com/computerwan/awesome-note/blob/master/attachment/hbase%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84%E5%9B%BE.jpg)
+
 1. client通过RPC机制与HMaster和HRegionServer进行通信，管理是与HMaster，读写数据是与HRegionServer
 2. Zookeeper存储了ROOT表(检索的索引表)，HMaster的地址，HRegionServer的注册信息，保证HRegionServer可以被HMaster感知（监控），且解决HMaster单点问题（集群只有一个master）
 3. HMaster管理Table的增删改查，负责HRegionServer的负载均衡，扩展，容错
@@ -54,7 +57,8 @@ Hbase返回的所有数据都是排序的：行，列族，列，时间戳（反
 2. HStore是存储的最小单元，一个或多个HStore组成一个HRegion。每个HStore保存一个Column Family，其又由一个MemStore和多个StoreFile组成。
 3. storeFile以HFile格式保存在HDFS中，是HBase存储的核心。用户数据首先写入MemStore，当数据满了会Flush成一个storeFile，多个storeFile会进行Compact，split操作。
 4. 其中通过HLog对象的WAL(Write Ahead Log)的类，进行恢复
-[hbase存储原理图](https://github.com/computerwan/awesome-note/blob/master/attachment/hbase%E5%AD%98%E5%82%A8%E5%8E%9F%E7%90%86%E5%9B%BE.jpg)
+
+![hbase存储原理图](https://github.com/computerwan/awesome-note/blob/master/attachment/hbase%E5%AD%98%E5%82%A8%E5%8E%9F%E7%90%86%E5%9B%BE.jpg)
 
 ### 3.4 存储格式
 包括HFile和HLog File

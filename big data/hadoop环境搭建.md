@@ -1,11 +1,12 @@
 > **手工置顶：命令行代理神器Proxychains**
 
-因为公司分配了固定IP，且统一用代理IP访问外部网页，故在虚拟机和宿主机使用桥接模式进行连接后，虚拟机还需要单独配置Proxy，一般情况下通过在network中设置代理IP，通过/etc/profile中设置http_proxy中设置环境变量可以对http层面的访问进行代理，apt-get操作需要单独在/etc/apt中设置，而对于ping等命令行操作是没有效果的。
-这里使用Proxychains能很好的解决该问题。
-[参考1](http://www.tuicool.com/articles/rUNFF3)
-[参考2](http://www.360doc.com/content/10/1007/12/296547_59036038.shtml)
-[参考3](https://zhuanlan.zhihu.com/p/24358104)
-
+因为公司分配了固定IP，且统一用代理IP访问外部网页，故在虚拟机和宿主机使用桥接模式进行连接后，虚拟机还需要单独配置Proxy，一般情况下通过在network中设置代理IP，通过/etc/profile中设置http_proxy中设置环境变量可以对http层面的访问进行代理，apt-get操作需要单独在/etc/apt中设置，而对于ping等命令行操作是没有效果的。  
+这里使用Proxychains能很好的解决该问题。  
+[参考1](http://www.tuicool.com/articles/rUNFF3)  
+[参考2](http://www.360doc.com/content/10/1007/12/296547_59036038.shtml)  
+[参考3](https://zhuanlan.zhihu.com/p/24358104)  
+补充：apt-get的代理设置，在/etc/apt下面建一个文件apt.conf,里面增加如下内容（注意必须有;）
+> Acquire::http::proxy "http://10.100.10.100:3128";
 
 ### 1. vmware tools安装
 

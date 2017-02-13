@@ -1,4 +1,6 @@
-import JavaBasic.IO.BufferedInputFile;
+package JavaBasic.io;
+
+import JavaBasic.io.BufferedInputFile;
 
 import java.io.IOException;
 import java.io.StringReader;

@@ -157,18 +157,3 @@ finally{
 ### 17. Java都是按值传递的
 * 基本数据类型+String：传递的是值得拷贝
 * 其他：传递的是地址的拷贝(在形参里面nwe一个对象后，两者不是指向同一个值)
-
-### 18.IO流
-* 读操作用read，readline；写用write；
-* 注意写完要用out.flush保存，结束要用close关闭
-
-1. 读写文件
-  * FileReader，FileWriter
-  * BufferedReader，BufferedWriter
-  * PrintWriter(包在bufferedWriter上面) -->写用out.print("...")
-2. 读写字节流
-  * InputStream和OutputStream
-3. 转换
-  * FileInputStream和FileOutputStream //File转为InputStream
-  * InputStreamReader和OutputStreamWriter //InputStream转为Reader
-  * ByteArrayInputStream(String.getBytes(StandardCharsets.UTF_8))； //字符串转为InputStream

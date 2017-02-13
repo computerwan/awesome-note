@@ -1,4 +1,6 @@
-import JavaBasic.IO.BufferedInputFile;
+package JavaBasic.io;
+
+import JavaBasic.io.BufferedInputFile;
 
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;

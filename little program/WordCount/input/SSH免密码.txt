@@ -1,0 +1,18 @@
+1. 在A上生成公钥/私钥对
+$ ssh-keygen -t rsa -P ''
+敲击回车，在/home/hadoop下生成.ssh目录，.ssh下有id_rsa（私钥 ） 和id_rsa.pub（公钥 ）。
+
+2. 把A下的id_rsa.pub复制到B下的~/.ssh/authorized_keys中
+$scp ~/.ssh/id_rsa.pub hadoop@10.100.2.214:/home/hadoop/id_rsa.pub.a
+$cat id_rsa.pub.a >> ~/.ssh/authorized_keys。
+
+这样A就可以SSH B了。
+对于.ssh目录，公钥、私钥的权限都有严格的要求。
+1、用户目录755或700，不能使77*
+2、.ssh目录755
+3、.pub或authorized_key644
+4、私钥600
+可以通过 /var/log/secure查看日志。
+
+注意：
+如果需要ssh localhost，则id_rsa.pub则也需要放入本机的authorized_keys中

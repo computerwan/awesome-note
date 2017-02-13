@@ -45,9 +45,12 @@
 * 跨域请求 [整理](https://github.com/computerwan/awesome-note/blob/master/basic/%E8%B7%A8%E5%9F%9F%E8%AF%B7%E6%B1%82.md)
 
 ### 九. 优秀github项目
+* [awesome-java-cn](https://github.com/jobbole/awesome-java-cn)
 * [Java核心技术代码样例](https://github.com/JeffLi1993/java-core-learning-example)
 * [java-design-patterns](https://github.com/iluwatar/java-design-patterns)
 * [useful-java-links](https://github.com/Vedenin/useful-java-links)：包含一些性能对比测试，**强烈推荐**
+* [hava-fun-with-machine-learning](https://github.com/humphd/have-fun-with-machine-learning)
+* [Google Interview University](https://github.com/jwasham/google-interview-university/blob/master/translations/README-cn.md)
 
 ### 十. 安卓
 2016年寒假自学的安卓笔记，因为修改了地址，图的连接没有修改，所有附件都在attachment中。

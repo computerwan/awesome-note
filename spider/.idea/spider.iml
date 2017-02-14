@@ -2,14 +2,12 @@
 <module type="JAVA_MODULE" version="4">
   <component name="FacetManager">
     <facet type="Python" name="Python">
-      <configuration sdkName="Python 2.7.12 (F:\Program Files (x86)\Anaconda2\python.exe)" />
+      <configuration sdkName="" />
     </facet>
   </component>
-  <component name="NewModuleRootManager" inherit-compiler-output="true">
-    <exclude-output />
+  <component name="NewModuleRootManager" inherit-compiler-output="false">
     <content url="file://$MODULE_DIR$" />
-    <orderEntry type="inheritedJdk" />
+    <orderEntry type="jdk" jdkName="Python 2.7.12 (D:\Program Files\Anaconda2\python.exe) (1)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="Python 2.7.12 (F:\Program Files (x86)\Anaconda2\python.exe) interpreter library" level="application" />
   </component>
 </module>

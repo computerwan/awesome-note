@@ -77,7 +77,7 @@ export HBASE_MANAGES_ZK=false
 ```
 
 hbase-site.xml  
- **hbase.zookeeper.quorum**是设置集群，如果分布式的用","分隔，这里单机版采用localhost
+ *hbase.zookeeper.quorum* 是设置集群，如果分布式的用","分隔，这里单机版采用localhost
  hbase.rootdir设置Hbase数据的写入地址，默认是/tmp/hbase-${user.name}
 ```
 <property>
@@ -136,3 +136,21 @@ root@hadoop-master:~#
 
 启动后直接进入hadoop-master容器当中，可以直接进行操作，此时如果不小心退出容器，可以通过如下命令重新进入容器：
 > sudo docker attach hadoop-master
+
+### 7. windows下面搭建hadoop环境
+主要参考了[hadoop本地运行和调试](https://www.polarxiong.com/archives/Hadoop-Intellij%E7%BB%93%E5%90%88Maven%E6%9C%AC%E5%9C%B0%E8%BF%90%E8%A1%8C%E5%92%8C%E8%B0%83%E8%AF%95MapReduce%E7%A8%8B%E5%BA%8F-%E6%97%A0%E9%9C%80%E6%90%AD%E8%BD%BDHadoop%E5%92%8CHDFS%E7%8E%AF%E5%A2%83.html)
+
+针对windows下文件没有权限的问题，解决方法如下：
+
+
+1. 在java文件下下面重写NativeIO包，注意包名：```org.apache.hadoop.io.nativeio```,该包修改了573的返回值，保证其不需要检查路径。
+2. 依赖增加：
+```
+<dependency>
+    <groupId>org.apache.hadoop</groupId>
+    <artifactId>hadoop-mapreduce-client-common</artifactId>
+    <version>2.4.1</version>
+</dependency>
+```
+
+详见：[word count示例程序](https://github.com/computerwan/awesome-note/tree/master/little%20program/WordCount)

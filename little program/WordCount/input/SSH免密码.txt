@@ -1,18 +1,18 @@
-1. ��A�����ɹ�Կ/˽Կ��
+1. 在A上生成公钥/私钥对
 $ ssh-keygen -t rsa -P ''
-�û��س�����/home/hadoop������.sshĿ¼��.ssh����id_rsa��˽Կ �� ��id_rsa.pub����Կ ����
+敲击回车，在/home/hadoop下生成.ssh目录，.ssh下有id_rsa（私钥 ） 和id_rsa.pub（公钥 ）。
 
-2. ��A�µ�id_rsa.pub���Ƶ�B�µ�~/.ssh/authorized_keys��
+2. 把A下的id_rsa.pub复制到B下的~/.ssh/authorized_keys中
 $scp ~/.ssh/id_rsa.pub hadoop@10.100.2.214:/home/hadoop/id_rsa.pub.a
-$cat id_rsa.pub.a >> ~/.ssh/authorized_keys��
+$cat id_rsa.pub.a >> ~/.ssh/authorized_keys。
 
-����A�Ϳ���SSH B�ˡ�
-����.sshĿ¼����Կ��˽Կ��Ȩ�޶����ϸ��Ҫ��
-1���û�Ŀ¼755��700������ʹ77*
-2��.sshĿ¼755
-3��.pub��authorized_key644
-4��˽Կ600
-����ͨ�� /var/log/secure�鿴��־��
+这样A就可以SSH B了。
+对于.ssh目录，公钥、私钥的权限都有严格的要求。
+1、用户目录755或700，不能使77*
+2、.ssh目录755
+3、.pub或authorized_key644
+4、私钥600
+可以通过 /var/log/secure查看日志。
 
-ע�⣺
-�����Ҫssh localhost����id_rsa.pub��Ҳ��Ҫ���뱾����authorized_keys��
+注意：
+如果需要ssh localhost，则id_rsa.pub则也需要放入本机的authorized_keys中

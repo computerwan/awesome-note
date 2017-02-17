@@ -33,6 +33,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
+ * 源码分析[系列]：http://blog.csdn.net/fansy1990/article/details/12589765
  * Created by pengcheng.wan on 2017/2/15.
  */
 public final class RecommenderJob extends AbstractJob {
@@ -44,12 +45,29 @@ public final class RecommenderJob extends AbstractJob {
     private static final int DEFAULT_MAX_PREFS = 500;
     private static final int DEFAULT_MIN_PREFS_PER_USER = 1;
 
+
+    /**
+     * 增加的其他类里面的常量
+     */
+    static final String USERS_FILE = "usersFile";
+    static final String MAX_PREFS_PER_USER_CONSIDERED = "maxPrefsPerUserConsidered";
+    static final int DEFAULT_MAX_PREFS_PER_USER_CONSIDERED = 10;
+    static final String USER_ITEM_FILE = "userItemFile";
+    static final String ITEMID_INDEX_PATH = "itemIDIndexPath";
+    static final String NUM_RECOMMENDATIONS = "numRecommendations";
+    static final int DEFAULT_NUM_RECOMMENDATIONS = 10;
+    static final String ITEMS_FILE = "itemsFile";
+
+
+    /**
+     * 基本参数初始化
+     */
     public int run(String[] args) throws Exception {
 
         addInputOption();
         addOutputOption();
         addOption("numRecommendations", "n", "Number of recommendations per user",
-                String.valueOf(AggregateAndRecommendReducer.DEFAULT_NUM_RECOMMENDATIONS));
+                String.valueOf(DEFAULT_NUM_RECOMMENDATIONS));
         addOption("usersFile", null, "File of users to recommend for", null);
         addOption("itemsFile", null, "File of items to recommend for", null);
         addOption("filterFile", "f", "File containing comma-separated userID,itemID pairs. Used to exclude the item from "
@@ -60,7 +78,7 @@ public final class RecommenderJob extends AbstractJob {
         addOption("booleanData", "b", "Treat input as without pref values", Boolean.FALSE.toString());
         addOption("maxPrefsPerUser", "mxp",
                 "Maximum number of preferences considered per user in final recommendation phase",
-                String.valueOf(UserVectorSplitterMapper.DEFAULT_MAX_PREFS_PER_USER_CONSIDERED));
+                String.valueOf(DEFAULT_MAX_PREFS_PER_USER_CONSIDERED));
         addOption("minPrefsPerUser", "mp", "ignore users with less preferences than this in the similarity computation "
                 + "(default: " + DEFAULT_MIN_PREFS_PER_USER + ')', String.valueOf(DEFAULT_MIN_PREFS_PER_USER));
         addOption("maxSimilaritiesPerItem", "m", "Maximum number of similarities considered per item ",
@@ -108,6 +126,10 @@ public final class RecommenderJob extends AbstractJob {
 
         int numberOfUsers = -1;
 
+        /**
+         * 调用：shouldRunNextPhase，根据phase和startPhase、endPhase值做比较
+         * phase含义是数量不定的几个MR的集合，优点是如果前两个phase成功了，后面的phase失败了，可以直接把成功的跳掉，直接执行失败的
+         */
         if (shouldRunNextPhase(parsedArgs, currentPhase)) {
             ToolRunner.run(getConf(), new PreparePreferenceMatrixJob(), new String[]{
                     "--input", getInputPath().toString(),
@@ -120,7 +142,12 @@ public final class RecommenderJob extends AbstractJob {
             numberOfUsers = HadoopUtil.readInt(new Path(prepPath, PreparePreferenceMatrixJob.NUM_USERS), getConf());
         }
 
-
+        /**
+         * 调用：PreparePreferenceMatrixJob，其中包含三个prepareJob
+         *  1. convert items to an internal index
+         *  2. convert user preferences into a vector per user
+         *  3. build the rating matrix
+         */
         if (shouldRunNextPhase(parsedArgs, currentPhase)) {
 
       /* special behavior if phase 1 is skipped */
@@ -130,6 +157,12 @@ public final class RecommenderJob extends AbstractJob {
             }
 
             //calculate the co-occurrence matrix
+            /** 调用：RowSimilarityJob，包含3个shouldRunNextPhase，里面有分别都有一个prepareJob函数
+             *  作用：calculate the co-occurrence matrix
+             *  1. weightsPath
+             *  2. pairwiseSimilarityPath
+             *  3. asMatrix
+             */
             ToolRunner.run(getConf(), new RowSimilarityJob(), new String[]{
                     "--input", new Path(prepPath, PreparePreferenceMatrixJob.RATING_MATRIX).toString(),
                     "--output", similarityMatrixPath.toString(),
@@ -145,6 +178,11 @@ public final class RecommenderJob extends AbstractJob {
             });
 
             // write out the similarity matrix if the user specified that behavior
+            /**
+             * 计算co-occurrence matrix的乘法，下面有两个Job
+             * 1. outputSimilarityMatrix
+             * 2. partialMultiply
+             */
             if (hasOption("outputPathForSimilarityMatrix")) {
                 Path outputPathForSimilarityMatrix = new Path(getOption("outputPathForSimilarityMatrix"));
 
@@ -181,14 +219,14 @@ public final class RecommenderJob extends AbstractJob {
             partialMultiplyConf.set("mapred.output.dir", partialMultiplyPath.toString());
 
             if (usersFile != null) {
-                partialMultiplyConf.set(UserVectorSplitterMapper.USERS_FILE, usersFile);
+                partialMultiplyConf.set(USERS_FILE, usersFile);
             }
 
             if (userItemFile != null) {
-                partialMultiplyConf.set(IDReader.USER_ITEM_FILE, userItemFile);
+                partialMultiplyConf.set(USER_ITEM_FILE, userItemFile);
             }
 
-            partialMultiplyConf.setInt(UserVectorSplitterMapper.MAX_PREFS_PER_USER_CONSIDERED, maxPrefsPerUser);
+            partialMultiplyConf.setInt(MAX_PREFS_PER_USER_CONSIDERED, maxPrefsPerUser);
 
             boolean succeeded = partialMultiply.waitForCompletion(true);
             if (!succeeded) {
@@ -196,6 +234,9 @@ public final class RecommenderJob extends AbstractJob {
             }
         }
 
+        /**
+         * itemFiltering：设置过滤器
+         */
         if (shouldRunNextPhase(parsedArgs, currentPhase)) {
             //filter out any users we don't care about
       /* convert the user/item pairs to filter if a filterfile has been specified */
@@ -219,6 +260,9 @@ public final class RecommenderJob extends AbstractJob {
                     ? SequenceFileOutputFormat.class : TextOutputFormat.class;
 
             //extract out the recommendations
+            /**
+             * aggregateAndRecommend:合并和推荐
+             */
             Job aggregateAndRecommend = prepareJob(
                     new Path(aggregateAndRecommendInput), outputPath, SequenceFileInputFormat.class,
                     PartialMultiplyMapper.class, VarLongWritable.class, PrefAndSimilarityColumnWritable.class,
@@ -226,20 +270,20 @@ public final class RecommenderJob extends AbstractJob {
                     outputFormat);
             Configuration aggregateAndRecommendConf = aggregateAndRecommend.getConfiguration();
             if (itemsFile != null) {
-                aggregateAndRecommendConf.set(AggregateAndRecommendReducer.ITEMS_FILE, itemsFile);
+                aggregateAndRecommendConf.set(ITEMS_FILE, itemsFile);
             }
 
             if (userItemFile != null) {
-                aggregateAndRecommendConf.set(IDReader.USER_ITEM_FILE, userItemFile);
+                aggregateAndRecommendConf.set(USER_ITEM_FILE, userItemFile);
             }
 
             if (filterFile != null) {
                 setS3SafeCombinedInputPath(aggregateAndRecommend, getTempPath(), partialMultiplyPath, explicitFilterPath);
             }
             setIOSort(aggregateAndRecommend);
-            aggregateAndRecommendConf.set(AggregateAndRecommendReducer.ITEMID_INDEX_PATH,
+            aggregateAndRecommendConf.set(ITEMID_INDEX_PATH,
                     new Path(prepPath, PreparePreferenceMatrixJob.ITEMID_INDEX).toString());
-            aggregateAndRecommendConf.setInt(AggregateAndRecommendReducer.NUM_RECOMMENDATIONS, numRecommendations);
+            aggregateAndRecommendConf.setInt(NUM_RECOMMENDATIONS, numRecommendations);
             aggregateAndRecommendConf.setBoolean(BOOLEAN_DATA, booleanData);
             boolean succeeded = aggregateAndRecommend.waitForCompletion(true);
             if (!succeeded) {

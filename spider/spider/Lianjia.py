@@ -4,7 +4,7 @@
 lianjia对象
 标题，户型，面积，区，小区名，房层，朝向, 建成时间, 距离地铁站等, 总价, 单价
 @author:wan
-@file:Lianjia.py
+@file:LogIndex.py
 @time:2017/1/26
 """
 from sqlalchemy import Column, String, BigInteger, Float
